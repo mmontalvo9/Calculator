@@ -69,7 +69,6 @@
       margin-top: 20px;
       display: inline-block;
     }
-
   </style>
 </head>
 <body>
@@ -77,27 +76,26 @@
   <div class="graph-container">
     <h2>Graph a Function</h2>
 
-    <!-- Mode toggle -->
+    <!-- ✅ Combined Form -->
     <form method="POST">
+      <!-- Mode toggle -->
       <button class="operator" type="submit" name="TOGGLE_MODE">Mode: {{ mode.capitalize() }}</button>
-    </form>
 
-    <!-- Graph input -->
-    <form method="POST">
+      <!-- Graph input -->
       <input type="text" name="equation" placeholder="e.g. sin(x), x^2 + 3" required>
       <br>
       <button class="graph-btn" type="submit">Graph</button>
     </form>
 
-    <!-- Display graph -->
+    <!-- Show plot -->
     {% if show_graph %}
       <img src="{{ url_for('static', filename='graph.png') }}" alt="Graph">
     {% endif %}
 
-    <!-- Back to calculator -->
+    <!-- Back link -->
     <a href="/">← Back to Calculator</a>
   </div>
 
 </body>
 </html>
->
+
