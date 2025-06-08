@@ -25,10 +25,11 @@ This is a fully functional, Flask-powered graphing calculator inspired by the TI
 ## 🛠 Technologies Used
 
 * Python 3
-* Flask
-* HTML5 / CSS3 / JavaScript
+* Flask (backend framework)
+* HTML5 / CSS3 / JavaScript (frontend)
+* Replit (developmental environment and testing server)
 * Matplotlib (for graphing)
-* Hosted via Render
+* Render (hosting platform)
 
 ---
 
