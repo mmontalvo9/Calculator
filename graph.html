@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Graphing Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+    }
+
+    .graph-container {
+      background-color: #2d2d2d;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #00ffcc;
+      width: 400px;
+      text-align: center;
+    }
+
+    .graph-container input[type="text"] {
+      width: 90%;
+      padding: 12px;
+      font-size: 16px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      background-color: #111;
+      color: #0f0;
+      text-align: center;
+    }
+
+    .graph-container button {
+      padding: 12px 20px;
+      margin: 5px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+    }
+
+    .operator {
+      background-color: #ff9800;
+    }
+
+    .graph-btn {
+      background-color: #009688;
+    }
+
+    .graph-btn:hover, .operator:hover {
+      filter: brightness(1.1);
+    }
+
+    img {
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 6px;
+      border: 2px solid #00ffcc;
+    }
+
+    a {
+      text-decoration: none;
+      color: #00ffff;
+      margin-top: 20px;
+      display: inline-block;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="graph-container">
+    <h2>Graph a Function</h2>
+
+    <!-- Mode toggle -->
+    <form method="POST">
+      <button class="operator" type="submit" name="TOGGLE_MODE">Mode: {{ mode.capitalize() }}</button>
+    </form>
+
+    <!-- Graph input -->
+    <form method="POST">
+      <input type="text" name="equation" placeholder="e.g. sin(x), x^2 + 3" required>
+      <br>
+      <button class="graph-btn" type="submit">Graph</button>
+    </form>
+
+    <!-- Display graph -->
+    {% if show_graph %}
+      <img src="{{ url_for('static', filename='graph.png') }}" alt="Graph">
+    {% endif %}
+
+    <!-- Back to calculator -->
+    <a href="/">← Back to Calculator</a>
+  </div>
+
+</body>
+</html>
+>
