@@ -3,10 +3,14 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import logging
 
 app = Flask(__name__)
 expression = ""
 mode = "radians"  # default mode
+
+# Logging setup (ensures visibility in Render)
+logging.basicConfig(level=logging.INFO)
 
 @app.route("/", methods=["GET", "POST"])
 def calculator():
@@ -15,9 +19,11 @@ def calculator():
 
     if request.method == "POST":
         btn = request.form["btn"]
+        app.logger.info(f"Button pressed: {btn}")
 
         if btn == "TOGGLE_MODE":
             mode = "degrees" if mode == "radians" else "radians"
+            app.logger.info(f"Mode switched to: {mode}")
         elif btn == "C":
             expression = ""
         elif btn == "DEL":
@@ -32,7 +38,7 @@ def calculator():
                     expr = expr.replace('asin', 'math.degrees(math.asin')
                     expr = expr.replace('acos', 'math.degrees(math.acos')
                     expr = expr.replace('atan', 'math.degrees(math.atan')
-                    expr = expr.replace(')', '))')  # wrap radians
+                    expr = expr.replace(')', '))')
                 else:
                     expr = expr.replace('sin', 'math.sin')
                     expr = expr.replace('cos', 'math.cos')
@@ -43,7 +49,8 @@ def calculator():
                 expr = expr.replace('!', 'math.factorial')
                 result = str(eval(expr))
                 expression = result
-            except Exception:
+            except Exception as e:
+                app.logger.error(f"Evaluation error: {e}")
                 result = "Error"
                 expression = ""
         else:
@@ -56,14 +63,17 @@ def calculator():
 def graph():
     global mode
     show_graph = False
+
     if request.method == "POST":
-        print("🔁 Received POST request at /graph")
+        app.logger.info("Received POST at /graph")
+
         if "TOGGLE_MODE" in request.form:
             mode = "degrees" if mode == "radians" else "radians"
-            print(f"🔁 Mode toggled to: {mode}")
+            app.logger.info(f"Mode toggled to: {mode}")
         else:
             equation = request.form["equation"]
-            print(f"🧮 Equation received: {equation}")
+            app.logger.info(f"Equation received: {equation}")
+
             try:
                 expr = equation.replace("^", "**").replace("π", str(math.pi))
                 x = np.linspace(-360 if mode == "degrees" else -10, 360 if mode == "degrees" else 10, 400)
@@ -87,7 +97,7 @@ def graph():
                 }
 
                 y = eval(expr, {"__builtins__": {}}, allowed_names)
-                print("✅ Eval successful")
+                app.logger.info("Eval successful")
 
                 plt.figure(figsize=(6, 4))
                 plt.plot(x, y)
@@ -99,18 +109,20 @@ def graph():
                 os.makedirs("static", exist_ok=True)
                 plt.savefig("static/graph.png")
                 plt.close()
-                print("🖼️ Graph saved at static/graph.png")
+
+                app.logger.info("Graph saved to static/graph.png")
                 show_graph = True
+
             except Exception as e:
-                print(f"❌ Graph error: {e}")
+                app.logger.error(f"Graphing error: {e}")
                 show_graph = False
 
     return render_template("graph.html", show_graph=show_graph, mode=mode)
 
-
-# ✅ Render-compatible port usage
+# ✅ Compatible with Render.com (binds to external port)
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
 
 
 
