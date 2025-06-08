@@ -56,15 +56,15 @@ def calculator():
 def graph():
     global mode
     show_graph = False
-    error = None
-
     if request.method == "POST":
+        print("🔁 Received POST request at /graph")
         if "TOGGLE_MODE" in request.form:
             mode = "degrees" if mode == "radians" else "radians"
+            print(f"🔁 Mode toggled to: {mode}")
         else:
-            equation = request.form.get("equation", "")
+            equation = request.form["equation"]
+            print(f"🧮 Equation received: {equation}")
             try:
-                print("▶️ Received graph input:", equation)
                 expr = equation.replace("^", "**").replace("π", str(math.pi))
                 x = np.linspace(-360 if mode == "degrees" else -10, 360 if mode == "degrees" else 10, 400)
 
@@ -95,17 +95,18 @@ def graph():
                 plt.title(f"y = {equation} ({mode})")
                 plt.xlabel("x")
                 plt.ylabel("y")
+
                 os.makedirs("static", exist_ok=True)
                 plt.savefig("static/graph.png")
-                print("🖼️ Graph saved at static/graph.png")
                 plt.close()
+                print("🖼️ Graph saved at static/graph.png")
                 show_graph = True
             except Exception as e:
-                error = f"Graph error: {e}"
-                print(error)
+                print(f"❌ Graph error: {e}")
                 show_graph = False
 
-    return render_template("graph.html", show_graph=show_graph, mode=mode, error=error)
+    return render_template("graph.html", show_graph=show_graph, mode=mode)
+
 
 # ✅ Render-compatible port usage
 if __name__ == "__main__":
