@@ -32,7 +32,7 @@ def calculator():
                     expr = expr.replace('asin', 'math.degrees(math.asin')
                     expr = expr.replace('acos', 'math.degrees(math.acos')
                     expr = expr.replace('atan', 'math.degrees(math.atan')
-                    expr = expr.replace(')', '))')  # close radians wrapping
+                    expr = expr.replace(')', '))')  # wrap radians
                 else:
                     expr = expr.replace('sin', 'math.sin')
                     expr = expr.replace('cos', 'math.cos')
@@ -56,12 +56,15 @@ def calculator():
 def graph():
     global mode
     show_graph = False
+    error = None
+
     if request.method == "POST":
         if "TOGGLE_MODE" in request.form:
             mode = "degrees" if mode == "radians" else "radians"
         else:
-            equation = request.form["equation"]
+            equation = request.form.get("equation", "")
             try:
+                print("▶️ Received graph input:", equation)
                 expr = equation.replace("^", "**").replace("π", str(math.pi))
                 x = np.linspace(-360 if mode == "degrees" else -10, 360 if mode == "degrees" else 10, 400)
 
@@ -84,6 +87,8 @@ def graph():
                 }
 
                 y = eval(expr, {"__builtins__": {}}, allowed_names)
+                print("✅ Eval successful")
+
                 plt.figure(figsize=(6, 4))
                 plt.plot(x, y)
                 plt.grid(True)
@@ -92,13 +97,15 @@ def graph():
                 plt.ylabel("y")
                 os.makedirs("static", exist_ok=True)
                 plt.savefig("static/graph.png")
+                print("🖼️ Graph saved at static/graph.png")
                 plt.close()
                 show_graph = True
             except Exception as e:
-                print(f"Graph error: {e}")
+                error = f"Graph error: {e}"
+                print(error)
                 show_graph = False
 
-    return render_template("graph.html", show_graph=show_graph, mode=mode)
+    return render_template("graph.html", show_graph=show_graph, mode=mode, error=error)
 
 # ✅ Render-compatible port usage
 if __name__ == "__main__":
